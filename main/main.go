@@ -17,7 +17,7 @@ func startServer(addr chan string) {
 		log.Fatal("network error:", err)
 	}
 	log.Println("start rpc server on", l.Addr())
-	addr <- l.Addr().String()
+	addr <- l.Addr().String() // 信道传输成功连接后的地址，实现了并发同步下的确定执行瞬时
 	geerpc.Accept(l)
 }
 
@@ -33,8 +33,9 @@ func main() {
 
 	// 最过拟合难理解的点是，conn 本身就实现了 writer 是直接往里写的，这里不是抽象成了显示请求
 	// send options
-	_ = json.NewEncoder(conn).Encode(geerpc.DefaultOption)
-	cc := codec.NewGobCodec(conn) // client side codec
+	// json encoder convert struct to json format and write to conn
+	_ = json.NewEncoder(conn).Encode(geerpc.DefaultOption) // return a encoder write to conn, and encode the DefaultOption
+	cc := codec.NewGobCodec(conn)                          // client side codec
 	// send request & receive response
 	for i := 0; i < 5; i++ {
 		h := &codec.Header{
