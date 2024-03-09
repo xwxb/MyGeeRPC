@@ -10,7 +10,7 @@ import (
 type methodType struct {
 	method    reflect.Method
 	ArgType   reflect.Type
-	ReplyType reflect.Type
+	ReplyType reflect.Type // the 2 rd method param, rpc func always be designed using it as the return value
 	numCalls  uint64
 }
 
@@ -18,6 +18,7 @@ func (m *methodType) NumCalls() uint64 {
 	return atomic.LoadUint64(&m.numCalls)
 }
 
+// new Argv return a new reflect.Value for the method's specific ArgType
 func (m *methodType) newArgv() reflect.Value {
 	var argv reflect.Value
 	// arg may be a pointer type, or a value type
@@ -44,10 +45,11 @@ func (m *methodType) newReplyv() reflect.Value {
 type service struct {
 	name   string
 	typ    reflect.Type
-	rcvr   reflect.Value
+	rcvr   reflect.Value // receiver of methods for the service
 	method map[string]*methodType
 }
 
+// newService init all rcvr method as a rcvr service
 func newService(rcvr interface{}) *service {
 	s := new(service)
 	s.rcvr = reflect.ValueOf(rcvr)
