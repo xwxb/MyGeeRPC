@@ -10,7 +10,7 @@ type Header struct {
 }
 
 type Codec interface {
-	io.Closer
+	io.Closer // rpc 中基本就是用来关闭连接的
 	ReadHeader(*Header) error
 	ReadBody(interface{}) error
 	Write(*Header, interface{}) error

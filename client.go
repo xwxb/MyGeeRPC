@@ -174,6 +174,7 @@ func parseOptions(opts ...*Option) (*Option, error) {
 	return opt, nil
 }
 
+// send
 func (client *Client) send(call *Call) {
 	// make sure that the client will send a complete request
 	client.sending.Lock() //  mutex lock the specific sending action
@@ -224,6 +225,7 @@ func (client *Client) Go(serviceMethod string, args, reply interface{}, done cha
 
 // Call invokes the named function, waits for it to complete,
 // and returns its error status.
+// 封装异步请求，然后处理完成和超时两种情况
 func (client *Client) Call(ctx context.Context, serviceMethod string, args, reply interface{}) error {
 	call := client.Go(serviceMethod, args, reply, make(chan *Call, 1))
 	select {

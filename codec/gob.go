@@ -8,7 +8,7 @@ import (
 )
 
 type GobCodec struct {
-	conn io.ReadWriteCloser
+	conn io.ReadWriteCloser // 接口用来可以接受任何实现了方法的不同连接
 	buf  *bufio.Writer
 	dec  *gob.Decoder
 	enc  *gob.Encoder
